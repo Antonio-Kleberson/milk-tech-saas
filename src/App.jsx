@@ -1,24 +1,24 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from '@/contexts/AuthContext';
-import { Toaster } from '@/components/ui/toaster';
-import { initializeSampleData } from '@/lib/storage';
-import Layout from '@/components/Layout';
-import ProtectedRoute from '@/components/ProtectedRoute';
-import Login from '@/pages/Login';
-import Register from '@/pages/Register';
-import Dashboard from '@/pages/Dashboard';
-import Prices from '@/pages/Prices';
-import Tanks from '@/pages/Tanks';
-import Animals from '@/pages/Animals';
-import Feed from '@/pages/Feed';
-import DairyPrice from '@/pages/DairyPrice';
-import DairyTanks from '@/pages/DairyTanks';
-import MyDairies from '@/pages/MyDairies';
-import Production from '@/pages/Production';
-import Relatorios from '@/pages/Relatorios';
-import Armazem from '@/pages/Armazem';
-import { HelmetProvider } from 'react-helmet-async';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { Toaster } from "@/components/ui/toaster";
+import { initializeSampleData } from "@/lib/storage";
+import Layout from "@/components/Layout";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import Login from "@/pages/Login";
+import Register from "@/pages/Register";
+import Dashboard from "@/pages/Dashboard";
+import Prices from "@/pages/Prices";
+import Tanks from "@/pages/Tanks";
+import Animals from "@/pages/Animals";
+import Feed from "@/pages/Feed";
+import DairyPrice from "@/pages/DairyPrice";
+import DairyTanks from "@/pages/DairyTanks";
+import MyDairies from "@/pages/MyDairies";
+import Production from "@/pages/Production";
+import Relatorios from "@/pages/Relatorios";
+import Armazem from "@/pages/Armazem";
+import { HelmetProvider } from "react-helmet-async";
 
 initializeSampleData();
 
@@ -92,16 +92,22 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-                <Route path="relatorios" element={
-                  <ProtectedRoute requiredRole="producer">
-                    <Relatorios />
-                  </ProtectedRoute>
-                } />
-                <Route path="armazem" element={
-                  <ProtectedRoute requiredRole="producer">
-                    <Armazem />
-                  </ProtectedRoute>
-                } />
+                <Route
+                  path="relatorios"
+                  element={
+                    <ProtectedRoute requiredRole="producer">
+                      <Relatorios />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="armazem"
+                  element={
+                    <ProtectedRoute requiredRole="producer">
+                      <Armazem />
+                    </ProtectedRoute>
+                  }
+                />
 
                 {/* QUEIJEIRA / LATICÍNIO */}
                 <Route

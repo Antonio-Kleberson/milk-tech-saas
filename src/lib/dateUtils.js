@@ -6,15 +6,15 @@ const safeDate = (input) => {
 
 export const formatDate = (
   dateString,
-  options = { day: '2-digit', month: '2-digit', year: 'numeric' }
+  options = { day: "2-digit", month: "2-digit", year: "numeric" },
 ) => {
-  if (!dateString) return 'N/A';
+  if (!dateString) return "N/A";
   const d = safeDate(dateString);
-  if (!d) return 'Data inválida';
+  if (!d) return "Data inválida";
   try {
-    return d.toLocaleDateString('pt-BR', options);
+    return d.toLocaleDateString("pt-BR", options);
   } catch {
-    return 'Data inválida';
+    return "Data inválida";
   }
 };
 
@@ -30,18 +30,18 @@ export const ageInMonths = (birthDate) => {
 };
 
 export const calculateAge = (birthDate) => {
-  if (!birthDate) return 'Idade desconhecida';
+  if (!birthDate) return "Idade desconhecida";
   const b = safeDate(birthDate);
-  if (!b) return 'Data de nascimento inválida';
+  if (!b) return "Data de nascimento inválida";
 
   const m = ageInMonths(birthDate);
-  if (m === null) return 'Idade desconhecida';
+  if (m === null) return "Idade desconhecida";
   if (m < 12) {
-    return `${m} ${m === 1 ? 'mês' : 'meses'}`;
+    return `${m} ${m === 1 ? "mês" : "meses"}`;
   }
   const years = Math.floor(m / 12);
   const rem = m % 12;
-  return `${years} ${years === 1 ? 'ano' : 'anos'}${rem > 0 ? ` e ${rem} ${rem === 1 ? 'mês' : 'meses'}` : ''}`;
+  return `${years} ${years === 1 ? "ano" : "anos"}${rem > 0 ? ` e ${rem} ${rem === 1 ? "mês" : "meses"}` : ""}`;
 };
 
 export const monthsBetween = (fromDate, toDate = new Date()) => {

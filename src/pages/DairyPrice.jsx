@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { storage } from '@/lib/storage';
-import { toast } from '@/components/ui/use-toast';
-import { DollarSign, TrendingUp, Clock } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import React, { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { storage } from "@/lib/storage";
+import { toast } from "@/components/ui/use-toast";
+import { DollarSign, TrendingUp, Clock } from "lucide-react";
+import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 
 const DairyPrice = () => {
   const { user } = useAuth();
-  const [currentPrice, setCurrentPrice] = useState('');
+  const [currentPrice, setCurrentPrice] = useState("");
   const [priceHistory, setPriceHistory] = useState([]);
   const [dairy, setDairy] = useState(null);
 
@@ -22,17 +22,18 @@ const DairyPrice = () => {
 
   const loadData = () => {
     const dairies = storage.getDairies();
-    const userDairy = dairies.find(d => d.user_id === user.id);
-    
+    const userDairy = dairies.find((d) => d.user_id === user.id);
+
     if (userDairy) {
       setDairy(userDairy);
-      
-      const prices = storage.getMilkPrices()
-        .filter(p => p.dairy_id === userDairy.id)
+
+      const prices = storage
+        .getMilkPrices()
+        .filter((p) => p.dairy_id === userDairy.id)
         .sort((a, b) => new Date(b.effective_at) - new Date(a.effective_at));
-      
+
       setPriceHistory(prices);
-      
+
       if (prices.length > 0) {
         setCurrentPrice(prices[0].price_per_liter.toString());
       }
@@ -41,23 +42,23 @@ const DairyPrice = () => {
 
   const handlePriceUpdate = (e) => {
     e.preventDefault();
-    
+
     const price = parseFloat(currentPrice);
-    
-    if (price < 0.50 || price > 5.00) {
+
+    if (price < 0.5 || price > 5.0) {
       toast({
-        title: 'Erro',
-        description: 'O preço deve estar entre R$ 0,50 e R$ 5,00',
-        variant: 'destructive',
+        title: "Erro",
+        description: "O preço deve estar entre R$ 0,50 e R$ 5,00",
+        variant: "destructive",
       });
       return;
     }
 
     if (!dairy) {
       toast({
-        title: 'Erro',
-        description: 'Queijaria não encontrada. Complete seu cadastro primeiro.',
-        variant: 'destructive',
+        title: "Erro",
+        description: "Queijaria não encontrada. Complete seu cadastro primeiro.",
+        variant: "destructive",
       });
       return;
     }
@@ -68,14 +69,14 @@ const DairyPrice = () => {
       dairy_id: dairy.id,
       price_per_liter: price,
       effective_at: new Date().toISOString(),
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     };
 
     allPrices.push(newPrice);
     storage.setMilkPrices(allPrices);
 
     toast({
-      title: 'Preço atualizado com sucesso!',
+      title: "Preço atualizado com sucesso!",
       description: `Novo preço: R$ ${price.toFixed(2)} por litro`,
     });
 
@@ -83,12 +84,12 @@ const DairyPrice = () => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -102,22 +103,31 @@ const DairyPrice = () => {
       <>
         <Helmet>
           <title>Gerenciar Preço - MilkTech</title>
-          <meta name="description" content="Defina e atualize o preço do leite da sua queijaria na plataforma MilkTech." />
+          <meta
+            name="description"
+            content="Defina e atualize o preço do leite da sua queijaria na plataforma MilkTech."
+          />
           <meta property="og:title" content="Gerenciar Preço - MilkTech" />
-          <meta property="og:description" content="Defina e atualize o preço do leite da sua queijaria na plataforma MilkTech." />
+          <meta
+            property="og:description"
+            content="Defina e atualize o preço do leite da sua queijaria na plataforma MilkTech."
+          />
         </Helmet>
-        
+
         <div className="space-y-6">
           <Card>
             <CardContent className="text-center py-12">
               <p className="text-gray-500">
                 Complete o cadastro da sua queijaria para gerenciar preços
               </p>
-              <Button 
+              <Button
                 className="mt-4"
-                onClick={() => toast({
-                  title: '🚧 Esta funcionalidade ainda não foi implementada—mas não se preocupe! Você pode solicitá-la no seu próximo prompt! 🚀'
-                })}
+                onClick={() =>
+                  toast({
+                    title:
+                      "🚧 Esta funcionalidade ainda não foi implementada—mas não se preocupe! Você pode solicitá-la no seu próximo prompt! 🚀",
+                  })
+                }
               >
                 Completar Cadastro
               </Button>
@@ -132,11 +142,17 @@ const DairyPrice = () => {
     <>
       <Helmet>
         <title>Gerenciar Preço - MilkTech</title>
-        <meta name="description" content="Defina e atualize o preço do leite da sua queijaria na plataforma MilkTech." />
+        <meta
+          name="description"
+          content="Defina e atualize o preço do leite da sua queijaria na plataforma MilkTech."
+        />
         <meta property="og:title" content="Gerenciar Preço - MilkTech" />
-        <meta property="og:description" content="Defina e atualize o preço do leite da sua queijaria na plataforma MilkTech." />
+        <meta
+          property="og:description"
+          content="Defina e atualize o preço do leite da sua queijaria na plataforma MilkTech."
+        />
       </Helmet>
-      
+
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Gerenciar Preço do Leite</h1>
@@ -156,9 +172,7 @@ const DairyPrice = () => {
                   <DollarSign className="h-5 w-5 mr-2 text-green-600" />
                   Atualizar Preço
                 </CardTitle>
-                <CardDescription>
-                  Defina o novo preço por litro do leite
-                </CardDescription>
+                <CardDescription>Defina o novo preço por litro do leite</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handlePriceUpdate} className="space-y-4">
@@ -179,7 +193,7 @@ const DairyPrice = () => {
                       Valor deve estar entre R$ 0,50 e R$ 5,00
                     </p>
                   </div>
-                  
+
                   <Button type="submit" className="w-full">
                     Atualizar Preço
                   </Button>
@@ -200,9 +214,7 @@ const DairyPrice = () => {
                   <TrendingUp className="h-5 w-5 mr-2 text-blue-600" />
                   Preço Atual
                 </CardTitle>
-                <CardDescription>
-                  Preço vigente do leite
-                </CardDescription>
+                <CardDescription>Preço vigente do leite</CardDescription>
               </CardHeader>
               <CardContent>
                 {priceHistory.length > 0 ? (
@@ -222,9 +234,7 @@ const DairyPrice = () => {
                 ) : (
                   <div className="text-center py-8">
                     <p className="text-gray-500">Nenhum preço definido</p>
-                    <p className="text-sm text-gray-400 mt-1">
-                      Defina o primeiro preço do leite
-                    </p>
+                    <p className="text-sm text-gray-400 mt-1">Defina o primeiro preço do leite</p>
                   </div>
                 )}
               </CardContent>
@@ -241,20 +251,21 @@ const DairyPrice = () => {
           <Card>
             <CardHeader>
               <CardTitle>Histórico de Preços</CardTitle>
-              <CardDescription>
-                Últimas atualizações de preço
-              </CardDescription>
+              <CardDescription>Últimas atualizações de preço</CardDescription>
             </CardHeader>
             <CardContent>
               {priceHistory.length > 0 ? (
                 <div className="space-y-3">
                   {priceHistory.slice(0, 10).map((price, index) => (
-                    <div key={price.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <div
+                      key={price.id}
+                      className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+                    >
                       <div>
-                        <p className="font-medium">R$ {price.price_per_liter.toFixed(2)} por litro</p>
-                        <p className="text-sm text-gray-600">
-                          {formatDate(price.effective_at)}
+                        <p className="font-medium">
+                          R$ {price.price_per_liter.toFixed(2)} por litro
                         </p>
+                        <p className="text-sm text-gray-600">{formatDate(price.effective_at)}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm text-gray-500">

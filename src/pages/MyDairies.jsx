@@ -1,18 +1,33 @@
 // src/pages/MyDairies.jsx
-import React, { useEffect, useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { dairiesService } from '@/lib/dairies.service';
-import { Helmet } from 'react-helmet-async';
-import { toast } from '@/components/ui/use-toast';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { DollarSign, Edit, Trash2, Plus, MapPin, ExternalLink } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { formatDate } from '@/lib/dateUtils';
-import { LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import React, { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { dairiesService } from "@/lib/dairies.service";
+import { Helmet } from "react-helmet-async";
+import { toast } from "@/components/ui/use-toast";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { DollarSign, Edit, Trash2, Plus, MapPin, ExternalLink } from "lucide-react";
+import { motion } from "framer-motion";
+import { formatDate } from "@/lib/dateUtils";
+import {
+  LineChart,
+  Line,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+} from "recharts";
 
 const MyDairies = () => {
   const { user } = useAuth();
@@ -21,17 +36,17 @@ const MyDairies = () => {
   const [openForm, setOpenForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({
-    name: '',
-    cnpj: '',
-    phone: '',
-    responsavel: '',
-    address: '',
-    city: '',
-    state: '',
+    name: "",
+    cnpj: "",
+    phone: "",
+    responsavel: "",
+    address: "",
+    city: "",
+    state: "",
   });
 
   const [openPrice, setOpenPrice] = useState(false);
-  const [priceForm, setPriceForm] = useState({ dairy_id: '', price: '', date: '' });
+  const [priceForm, setPriceForm] = useState({ dairy_id: "", price: "", date: "" });
 
   // gráfico on/off por laticínio
   const [showChart, setShowChart] = useState({});
@@ -45,31 +60,35 @@ const MyDairies = () => {
     const list = dairiesService.listMyDairies(user.id);
     setDairies(list);
     const map = {};
-    list.forEach(d => { map[d.id] = dairiesService.listMyDairyPrices(d.id); });
+    list.forEach((d) => {
+      map[d.id] = dairiesService.listMyDairyPrices(d.id);
+    });
     setPricesByDairy(map);
   };
 
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [user.id]);
+  useEffect(() => {
+    load(); /* eslint-disable-next-line */
+  }, [user.id]);
 
   // abrir no Google Maps
   const openInGoogleMaps = (d) => {
-    const addressStr = [d.address, d.city, d.state].filter(Boolean).join(', ');
+    const addressStr = [d.address, d.city, d.state].filter(Boolean).join(", ");
     if (!addressStr) return;
     const q = encodeURIComponent(addressStr);
-    window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, '_blank');
+    window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, "_blank");
   };
 
   // ---- CRUD Laticínios
   const openCreate = () => {
     setEditing(null);
     setForm({
-      name: '',
-      cnpj: '',
-      phone: '',
-      responsavel: '',
-      address: '',
-      city: '',
-      state: '',
+      name: "",
+      cnpj: "",
+      phone: "",
+      responsavel: "",
+      address: "",
+      city: "",
+      state: "",
     });
     setOpenForm(true);
   };
@@ -77,13 +96,13 @@ const MyDairies = () => {
   const openEdit = (d) => {
     setEditing(d);
     setForm({
-      name: d.name || '',
-      cnpj: d.cnpj || '',
-      phone: d.phone || '',
-      responsavel: d.responsavel || '',
-      address: d.address || '',
-      city: d.city || '',
-      state: d.state || '',
+      name: d.name || "",
+      cnpj: d.cnpj || "",
+      phone: d.phone || "",
+      responsavel: d.responsavel || "",
+      address: d.address || "",
+      city: d.city || "",
+      state: d.state || "",
     });
     setOpenForm(true);
   };
@@ -91,15 +110,15 @@ const MyDairies = () => {
   const saveDairy = (e) => {
     e.preventDefault();
     if (!form.name.trim()) {
-      toast({ title: 'Informe o nome do laticínio', variant: 'destructive' });
+      toast({ title: "Informe o nome do laticínio", variant: "destructive" });
       return;
     }
     if (editing) {
       dairiesService.updateMyDairy(editing.id, form);
-      toast({ title: 'Laticínio atualizado!' });
+      toast({ title: "Laticínio atualizado!" });
     } else {
       dairiesService.createMyDairy(user.id, form);
-      toast({ title: 'Laticínio criado!' });
+      toast({ title: "Laticínio criado!" });
     }
     setOpenForm(false);
     setEditing(null);
@@ -108,13 +127,13 @@ const MyDairies = () => {
 
   const removeDairy = (id) => {
     dairiesService.deleteMyDairy(id);
-    toast({ title: 'Laticínio removido!' });
+    toast({ title: "Laticínio removido!" });
     load();
   };
 
   // ---- Preços (novo lançamento)
   const openPriceDialog = (dairy) => {
-    setPriceForm({ dairy_id: dairy.id, price: '', date: '' });
+    setPriceForm({ dairy_id: dairy.id, price: "", date: "" });
     setOpenPrice(true);
   };
 
@@ -122,14 +141,14 @@ const MyDairies = () => {
     e.preventDefault();
     const val = Number(priceForm.price);
     if (!val || val <= 0) {
-      toast({ title: 'Preço inválido', variant: 'destructive' });
+      toast({ title: "Preço inválido", variant: "destructive" });
       return;
     }
     dairiesService.addMyDairyPrice(priceForm.dairy_id, {
       price: val,
       date: priceForm.date || new Date().toISOString(),
     });
-    toast({ title: 'Preço registrado!' });
+    toast({ title: "Preço registrado!" });
     setOpenPrice(false);
     load();
   };
@@ -140,7 +159,7 @@ const MyDairies = () => {
       dairyId,
       priceId: price.id,
       price: price.price_per_liter.toFixed(2),
-      date: (price.effective_at || '').slice(0, 10),
+      date: (price.effective_at || "").slice(0, 10),
     });
     setOpenEditPrice(true);
   };
@@ -149,15 +168,14 @@ const MyDairies = () => {
     e.preventDefault();
     const val = Number(editingPrice.price);
     if (!val || val <= 0) {
-      toast({ title: 'Preço inválido', variant: 'destructive' });
+      toast({ title: "Preço inválido", variant: "destructive" });
       return;
     }
-    dairiesService.updateMyDairyPrice(
-      editingPrice.dairyId,
-      editingPrice.priceId,
-      { price: val, date: editingPrice.date }
-    );
-    toast({ title: 'Preço atualizado!' });
+    dairiesService.updateMyDairyPrice(editingPrice.dairyId, editingPrice.priceId, {
+      price: val,
+      date: editingPrice.date,
+    });
+    toast({ title: "Preço atualizado!" });
     setOpenEditPrice(false);
     setEditingPrice(null);
     load();
@@ -167,7 +185,10 @@ const MyDairies = () => {
     <>
       <Helmet>
         <title>Meus Laticínios - MilkTech</title>
-        <meta name="description" content="Cadastre seus laticínios, lance preços pessoais e acompanhe o histórico." />
+        <meta
+          name="description"
+          content="Cadastre seus laticínios, lance preços pessoais e acompanhe o histórico."
+        />
       </Helmet>
 
       <div className="space-y-6">
@@ -208,7 +229,7 @@ const MyDairies = () => {
                         {(d.address || d.city || d.state) && (
                           <p className="text-sm text-gray-600 flex items-center mt-1 break-words">
                             <MapPin className="h-3 w-3 mr-1" />
-                            {[d.address, d.city, d.state].filter(Boolean).join(', ')}
+                            {[d.address, d.city, d.state].filter(Boolean).join(", ")}
                           </p>
                         )}
                       </div>
@@ -225,16 +246,36 @@ const MyDairies = () => {
                             Ver no Mapa
                           </Button>
                         )}
-                        <Button variant="outline" size="sm" className="w-full xs:w-auto" onClick={() => toggleChart(d.id)}>
-                          {showChart[d.id] ? 'Ocultar Gráfico' : 'Gráfico'}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full xs:w-auto"
+                          onClick={() => toggleChart(d.id)}
+                        >
+                          {showChart[d.id] ? "Ocultar Gráfico" : "Gráfico"}
                         </Button>
-                        <Button variant="outline" size="sm" className="w-full xs:w-auto" onClick={() => openPriceDialog(d)}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full xs:w-auto"
+                          onClick={() => openPriceDialog(d)}
+                        >
                           Lançar Preço
                         </Button>
-                        <Button variant="outline" size="sm" className="w-full xs:w-auto" onClick={() => openEdit(d)}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full xs:w-auto"
+                          onClick={() => openEdit(d)}
+                        >
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button variant="outline" size="sm" className="w-full xs:w-auto" onClick={() => removeDairy(d.id)}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full xs:w-auto"
+                          onClick={() => removeDairy(d.id)}
+                        >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -248,11 +289,18 @@ const MyDairies = () => {
                           <LineChart
                             data={[...prices]
                               .sort((a, b) => new Date(a.effective_at) - new Date(b.effective_at))
-                              .map(p => ({ date: formatDate(p.effective_at), price: p.price_per_liter }))}
+                              .map((p) => ({
+                                date: formatDate(p.effective_at),
+                                price: p.price_per_liter,
+                              }))}
                             margin={{ top: 8, right: 16, bottom: 0, left: 0 }}
                           >
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="date" tick={{ fontSize: 11 }} interval="preserveStartEnd" />
+                            <XAxis
+                              dataKey="date"
+                              tick={{ fontSize: 11 }}
+                              interval="preserveStartEnd"
+                            />
                             <YAxis tick={{ fontSize: 12 }} />
                             <Tooltip />
                             <Line type="monotone" dataKey="price" dot />
@@ -264,11 +312,14 @@ const MyDairies = () => {
                     {latest ? (
                       <div className="mb-4">
                         <p className="text-lg">
-                          <span className="font-semibold">Preço atual:</span>{' '}
+                          <span className="font-semibold">Preço atual:</span>{" "}
                           <span className="text-green-600 font-bold">
                             R$ {latest.price_per_liter.toFixed(2)}
                           </span>
-                          <span className="text-gray-500 text-sm"> • {formatDate(latest.effective_at)}</span>
+                          <span className="text-gray-500 text-sm">
+                            {" "}
+                            • {formatDate(latest.effective_at)}
+                          </span>
                         </p>
                       </div>
                     ) : (
@@ -279,11 +330,16 @@ const MyDairies = () => {
                       <div className="space-y-2">
                         <p className="text-sm font-medium text-gray-700">Histórico recente</p>
                         <div className="space-y-2">
-                          {prices.slice(0, 6).map(p => (
-                            <div key={p.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          {prices.slice(0, 6).map((p) => (
+                            <div
+                              key={p.id}
+                              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                            >
                               <span>R$ {p.price_per_liter.toFixed(2)} / L</span>
                               <div className="flex items-center gap-2">
-                                <span className="text-sm text-gray-600">{formatDate(p.effective_at)}</span>
+                                <span className="text-sm text-gray-600">
+                                  {formatDate(p.effective_at)}
+                                </span>
                                 <Button
                                   variant="ghost"
                                   size="sm"
@@ -309,7 +365,9 @@ const MyDairies = () => {
             <Card>
               <CardContent className="text-center py-12">
                 <p className="text-gray-500">Nenhum laticínio cadastrado.</p>
-                <p className="text-sm text-gray-400 mt-2">Clique em “Novo Laticínio” para começar.</p>
+                <p className="text-sm text-gray-400 mt-2">
+                  Clique em “Novo Laticínio” para começar.
+                </p>
               </CardContent>
             </Card>
           )}
@@ -320,30 +378,43 @@ const MyDairies = () => {
       <Dialog open={openForm} onOpenChange={setOpenForm}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editing ? 'Editar Laticínio' : 'Novo Laticínio'}</DialogTitle>
+            <DialogTitle>{editing ? "Editar Laticínio" : "Novo Laticínio"}</DialogTitle>
             <DialogDescription>Registre dados básicos. CNPJ é opcional.</DialogDescription>
           </DialogHeader>
           <form onSubmit={saveDairy}>
             <div className="space-y-3 sm:space-y-4">
               <div>
                 <Label htmlFor="name">Nome</Label>
-                <Input id="name" value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+                <Input
+                  id="name"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  required
+                />
               </div>
               <div>
                 <Label htmlFor="cnpj">CNPJ (opcional)</Label>
-                <Input id="cnpj" value={form.cnpj}
-                  onChange={(e) => setForm({ ...form, cnpj: e.target.value })} />
+                <Input
+                  id="cnpj"
+                  value={form.cnpj}
+                  onChange={(e) => setForm({ ...form, cnpj: e.target.value })}
+                />
               </div>
               <div>
                 <Label htmlFor="phone">Telefone (opcional)</Label>
-                <Input id="phone" value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+                <Input
+                  id="phone"
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                />
               </div>
               <div>
                 <Label htmlFor="responsavel">Responsável (opcional)</Label>
-                <Input id="responsavel" value={form.responsavel}
-                  onChange={(e) => setForm({ ...form, responsavel: e.target.value })} />
+                <Input
+                  id="responsavel"
+                  value={form.responsavel}
+                  onChange={(e) => setForm({ ...form, responsavel: e.target.value })}
+                />
               </div>
             </div>
 
@@ -379,7 +450,7 @@ const MyDairies = () => {
             </div>
 
             <DialogFooter className="mt-6">
-              <Button type="submit">{editing ? 'Salvar' : 'Cadastrar'}</Button>
+              <Button type="submit">{editing ? "Salvar" : "Cadastrar"}</Button>
             </DialogFooter>
           </form>
         </DialogContent>
@@ -396,13 +467,24 @@ const MyDairies = () => {
             <div className="space-y-3 sm:space-y-4">
               <div>
                 <Label htmlFor="price">Preço por litro (R$)</Label>
-                <Input id="price" type="number" step="0.01" min="0" value={priceForm.price}
-                  onChange={(e) => setPriceForm({ ...priceForm, price: e.target.value })} required />
+                <Input
+                  id="price"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={priceForm.price}
+                  onChange={(e) => setPriceForm({ ...priceForm, price: e.target.value })}
+                  required
+                />
               </div>
               <div>
                 <Label htmlFor="date">Data (opcional)</Label>
-                <Input id="date" type="date" value={priceForm.date}
-                  onChange={(e) => setPriceForm({ ...priceForm, date: e.target.value })} />
+                <Input
+                  id="date"
+                  type="date"
+                  value={priceForm.date}
+                  onChange={(e) => setPriceForm({ ...priceForm, date: e.target.value })}
+                />
               </div>
             </div>
             <DialogFooter className="mt-6">
@@ -428,8 +510,8 @@ const MyDairies = () => {
                   type="number"
                   step="0.01"
                   min="0"
-                  value={editingPrice?.price || ''}
-                  onChange={(e) => setEditingPrice(ep => ({ ...ep, price: e.target.value }))}
+                  value={editingPrice?.price || ""}
+                  onChange={(e) => setEditingPrice((ep) => ({ ...ep, price: e.target.value }))}
                   required
                 />
               </div>
@@ -438,11 +520,12 @@ const MyDairies = () => {
                 <Input
                   id="edit-date"
                   type="date"
-                  value={editingPrice?.date || ''}
-                  onChange={(e) => setEditingPrice(ep => ({ ...ep, date: e.target.value }))}
+                  value={editingPrice?.date || ""}
+                  onChange={(e) => setEditingPrice((ep) => ({ ...ep, date: e.target.value }))}
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Se houver lançamento na mesma data, o sistema mantém um único registro (o mais recente).
+                  Se houver lançamento na mesma data, o sistema mantém um único registro (o mais
+                  recente).
                 </p>
               </div>
             </div>

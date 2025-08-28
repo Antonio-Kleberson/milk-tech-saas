@@ -1,12 +1,12 @@
 // src/components/dashboard/ProducerDashboard.jsx
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { StatCard } from '@/components/dashboard/StatCard'; // você já tem esse
-import { TopDairiesCard } from '@/components/dashboard/TopDairiesCard'; // você já tem esse
-import { UpcomingVaccinesCard } from '@/components/dashboard/UpcomingVaccinesCard'; // você já tem esse
-import { motion } from 'framer-motion';
-import { BookOpen, Beaker, Droplet, DollarSign } from 'lucide-react';
-import { LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { StatCard } from "@/components/dashboard/StatCard"; // você já tem esse
+import { TopDairiesCard } from "@/components/dashboard/TopDairiesCard"; // você já tem esse
+import { UpcomingVaccinesCard } from "@/components/dashboard/UpcomingVaccinesCard"; // você já tem esse
+import { motion } from "framer-motion";
+import { BookOpen, Beaker, Droplet, DollarSign } from "lucide-react";
+import { LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
 
 export const ProducerDashboard = ({ user, data }) => {
   const { topDairies = [], upcomingVaccines = [], totalAnimals = 0, totalRecipes = 0 } = data || {};
@@ -25,8 +25,20 @@ export const ProducerDashboard = ({ user, data }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard icon={BookOpen} title="Animais" value={totalAnimals} delay={0.0} color="blue" />
         <StatCard icon={Beaker} title="Misturas" value={totalRecipes} delay={0.05} color="purple" />
-        <StatCard icon={Droplet} title="Produção no mês (L)" value={month.total} delay={0.1} color="green" />
-        <StatCard icon={DollarSign} title="Bruto no mês (R$)" value={month.bruto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} delay={0.15} color="orange" />
+        <StatCard
+          icon={Droplet}
+          title="Produção no mês (L)"
+          value={month.total}
+          delay={0.1}
+          color="green"
+        />
+        <StatCard
+          icon={DollarSign}
+          title="Bruto no mês (R$)"
+          value={month.bruto.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+          delay={0.15}
+          color="orange"
+        />
       </div>
 
       {/* Produção do mês + gráfico */}
@@ -82,10 +94,18 @@ export const ProducerDashboard = ({ user, data }) => {
 
       {/* Top laticínios e Vacinas próximas */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+        >
           <TopDairiesCard dairies={topDairies} />
         </motion.div>
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
           <UpcomingVaccinesCard vaccines={upcomingVaccines} />
         </motion.div>
       </div>

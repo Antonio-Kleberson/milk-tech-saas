@@ -1,12 +1,12 @@
-import React from 'react';
-import { Percent, Edit, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { Percent, Edit, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const IngredientList = ({ items = [], onEdit, onDelete }) => (
   <div className="space-y-2">
     {items.map((item) => {
       const value = Number(item?.proportion_value);
-      const pct = Number.isFinite(value) ? value.toFixed(1) : '0.0';
+      const pct = Number.isFinite(value) ? value.toFixed(1) : "0.0";
 
       return (
         <div key={item.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
@@ -14,9 +14,7 @@ export const IngredientList = ({ items = [], onEdit, onDelete }) => (
             <Percent className="h-4 w-4 mr-2 text-gray-500" aria-hidden="true" />
             <div>
               <p className="font-medium">{item?.ingredient_name}</p>
-              <p className="text-sm text-gray-600">
-                {pct}%
-              </p>
+              <p className="text-sm text-gray-600">{pct}%</p>
             </div>
           </div>
           <div className="flex space-x-1">

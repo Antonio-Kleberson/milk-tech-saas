@@ -1,5 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,7 +22,7 @@ export function AnimalDialog({ open, onClose, onSubmit, initialData, validateEar
   const [earring, setEarring] = useState(initialData?.earring ?? "");
   const [breed, setBreed] = useState(initialData?.breed ?? "");
   const [birthDate, setBirthDate] = useState(
-    initialData?.birth_date ? initialData.birth_date.split("T")[0] : ""
+    initialData?.birth_date ? initialData.birth_date.split("T")[0] : "",
   );
 
   useEffect(() => {
@@ -37,7 +43,8 @@ export function AnimalDialog({ open, onClose, onSubmit, initialData, validateEar
       const ok = validateEarring(earring, initialData?.id);
       if (!ok) e.earring = "Já existe um animal com esse brinco.";
     }
-    if (birthDate && birthDate > todayStr) e.birth_date = "Data de nascimento não pode ser no futuro.";
+    if (birthDate && birthDate > todayStr)
+      e.birth_date = "Data de nascimento não pode ser no futuro.";
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -61,7 +68,8 @@ export function AnimalDialog({ open, onClose, onSubmit, initialData, validateEar
         <DialogHeader>
           <DialogTitle>{isEdit ? "Editar animal" : "Novo animal"}</DialogTitle>
           <DialogDescription className="sr-only">
-            Formulário para {isEdit ? "editar" : "criar"} um animal com nome, brinco, raça e data de nascimento.
+            Formulário para {isEdit ? "editar" : "criar"} um animal com nome, brinco, raça e data de
+            nascimento.
           </DialogDescription>
         </DialogHeader>
 
@@ -83,7 +91,11 @@ export function AnimalDialog({ open, onClose, onSubmit, initialData, validateEar
               aria-invalid={Boolean(errors.name)}
               aria-describedby={errors.name ? "err-name" : undefined}
             />
-            {errors.name && <p id="err-name" className="text-sm text-red-600">{errors.name}</p>}
+            {errors.name && (
+              <p id="err-name" className="text-sm text-red-600">
+                {errors.name}
+              </p>
+            )}
           </div>
 
           <div className="grid gap-2">
@@ -96,7 +108,11 @@ export function AnimalDialog({ open, onClose, onSubmit, initialData, validateEar
               aria-invalid={Boolean(errors.earring)}
               aria-describedby={errors.earring ? "err-earring" : undefined}
             />
-            {errors.earring && <p id="err-earring" className="text-sm text-red-600">{errors.earring}</p>}
+            {errors.earring && (
+              <p id="err-earring" className="text-sm text-red-600">
+                {errors.earring}
+              </p>
+            )}
           </div>
 
           <div className="grid gap-2">
@@ -121,12 +137,19 @@ export function AnimalDialog({ open, onClose, onSubmit, initialData, validateEar
               aria-describedby={errors.birth_date ? "err-birth" : undefined}
             />
             {errors.birth_date && (
-              <p id="err-birth" className="text-sm text-red-600">{errors.birth_date}</p>
+              <p id="err-birth" className="text-sm text-red-600">
+                {errors.birth_date}
+              </p>
             )}
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="outline" onClick={() => onClose?.()} aria-label="Cancelar">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onClose?.()}
+              aria-label="Cancelar"
+            >
               Cancelar
             </Button>
             <Button type="submit" aria-label={isEdit ? "Salvar alterações" : "Criar animal"}>

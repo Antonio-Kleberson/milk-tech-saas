@@ -1,30 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import React, { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const MAX_LEN = 80;
 
 export const RecipeDialog = ({ isOpen, onOpenChange, onSubmit, recipe, onValidateName }) => {
-  const [name, setName] = useState('');
-  const [err, setErr] = useState('');
+  const [name, setName] = useState("");
+  const [err, setErr] = useState("");
 
   useEffect(() => {
     if (recipe) {
-      setName(recipe.name || '');
+      setName(recipe.name || "");
     } else {
-      setName('');
+      setName("");
     }
-    setErr('');
+    setErr("");
   }, [recipe, isOpen]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const trimmed = (name || '').trim();
+    const trimmed = (name || "").trim();
     if (!trimmed) {
-      setErr('Informe um nome válido.');
+      setErr("Informe um nome válido.");
       return;
     }
     if (trimmed.length > MAX_LEN) {
@@ -33,7 +40,7 @@ export const RecipeDialog = ({ isOpen, onOpenChange, onSubmit, recipe, onValidat
     }
 
     // verificação opcional de duplicidade (pai decide a regra)
-    if (typeof onValidateName === 'function') {
+    if (typeof onValidateName === "function") {
       const msg = onValidateName(trimmed);
       if (msg) {
         setErr(msg);
@@ -41,7 +48,7 @@ export const RecipeDialog = ({ isOpen, onOpenChange, onSubmit, recipe, onValidat
       }
     }
 
-    setErr('');
+    setErr("");
     onSubmit({ name: trimmed });
   };
 
@@ -51,9 +58,9 @@ export const RecipeDialog = ({ isOpen, onOpenChange, onSubmit, recipe, onValidat
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{isEditing ? 'Editar Receita' : 'Nova Receita'}</DialogTitle>
+          <DialogTitle>{isEditing ? "Editar Receita" : "Nova Receita"}</DialogTitle>
           <DialogDescription>
-            {isEditing ? 'Edite o nome da receita.' : 'Crie uma nova receita de ração.'}
+            {isEditing ? "Edite o nome da receita." : "Crie uma nova receita de ração."}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
@@ -66,12 +73,12 @@ export const RecipeDialog = ({ isOpen, onOpenChange, onSubmit, recipe, onValidat
                 onChange={(e) => {
                   const v = e.target.value;
                   setName(v.length <= MAX_LEN ? v : v.slice(0, MAX_LEN));
-                  if (err) setErr('');
+                  if (err) setErr("");
                 }}
                 placeholder="Ex: Ração Básica Gado Leiteiro"
                 required
                 aria-invalid={!!err}
-                aria-describedby={err ? 'recipe-name-error' : undefined}
+                aria-describedby={err ? "recipe-name-error" : undefined}
               />
               {err && (
                 <p id="recipe-name-error" className="mt-1 text-xs text-red-600">
@@ -81,7 +88,7 @@ export const RecipeDialog = ({ isOpen, onOpenChange, onSubmit, recipe, onValidat
             </div>
           </div>
           <DialogFooter className="mt-6">
-            <Button type="submit">{isEditing ? 'Atualizar' : 'Criar Receita'}</Button>
+            <Button type="submit">{isEditing ? "Atualizar" : "Criar Receita"}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

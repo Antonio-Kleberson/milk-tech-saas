@@ -1,14 +1,26 @@
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from '@/components/ui/use-toast';
-import { storage } from '@/lib/storage';
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "@/components/ui/use-toast";
+import { storage } from "@/lib/storage";
 
 const toNumber = (v) => {
-  const n = typeof v === 'string' ? v.replace(',', '.') : v;
+  const n = typeof v === "string" ? v.replace(",", ".") : v;
   const num = parseFloat(n);
   return Number.isFinite(num) ? num : 0;
 };
@@ -17,9 +29,7 @@ const round2 = (n) => Math.round(n * 100) / 100;
 
 const CalculatorResult = ({ result }) => (
   <div className="mt-6 p-4 bg-green-50 rounded-lg">
-    <h4 className="font-medium text-green-900 mb-3">
-      Resultado para {result.recipe}
-    </h4>
+    <h4 className="font-medium text-green-900 mb-3">Resultado para {result.recipe}</h4>
     <div className="space-y-2">
       <p className="text-sm text-green-800">
         <strong>Quantidade total:</strong> {result.targetKg} kg
@@ -43,25 +53,29 @@ const CalculatorResult = ({ result }) => (
 );
 
 export const CalculatorDialog = ({ isOpen, onOpenChange, recipes, onRegisterBatch }) => {
-  const [form, setForm] = useState({ recipe_id: '', target_kg: '', daily_consumption: '' });
+  const [form, setForm] = useState({ recipe_id: "", target_kg: "", daily_consumption: "" });
   const [result, setResult] = useState(null);
 
   const calculateFeed = () => {
-    const recipe = (recipes || []).find(r => r.id === form.recipe_id);
+    const recipe = (recipes || []).find((r) => r.id === form.recipe_id);
     if (!recipe) {
-      toast({ title: 'Selecione uma receita', variant: 'destructive' });
+      toast({ title: "Selecione uma receita", variant: "destructive" });
       return;
     }
 
-    const items = (storage.getFeedRecipeItems?.() || []).filter(i => i.recipe_id === recipe.id);
+    const items = (storage.getFeedRecipeItems?.() || []).filter((i) => i.recipe_id === recipe.id);
     const targetKg = toNumber(form.target_kg);
 
     if (!targetKg || targetKg <= 0) {
-      toast({ title: 'Erro', description: 'Digite uma quantidade válida para produzir', variant: 'destructive' });
+      toast({
+        title: "Erro",
+        description: "Digite uma quantidade válida para produzir",
+        variant: "destructive",
+      });
       return;
     }
 
-    const ingredients = items.map(item => {
+    const ingredients = items.map((item) => {
       const prop = toNumber(item.proportion_value);
       return {
         name: item.ingredient_name,
@@ -90,8 +104,9 @@ export const CalculatorDialog = ({ isOpen, onOpenChange, recipes, onRegisterBatc
     } else {
       // Se não tiver serviço ainda, apenas avisa. Não muda visual.
       toast({
-        title: 'Armazém',
-        description: 'Você pode ativar o registro no armazém depois. (Passe a prop onRegisterBatch)',
+        title: "Armazém",
+        description:
+          "Você pode ativar o registro no armazém depois. (Passe a prop onRegisterBatch)",
       });
     }
   };
@@ -108,11 +123,18 @@ export const CalculatorDialog = ({ isOpen, onOpenChange, recipes, onRegisterBatc
         <div className="space-y-3 sm:space-y-4">
           <div>
             <Label htmlFor="calc-recipe">Receita</Label>
-            <Select value={form.recipe_id} onValueChange={(value) => setForm({ ...form, recipe_id: value })}>
-              <SelectTrigger><SelectValue placeholder="Selecione uma receita" /></SelectTrigger>
+            <Select
+              value={form.recipe_id}
+              onValueChange={(value) => setForm({ ...form, recipe_id: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione uma receita" />
+              </SelectTrigger>
               <SelectContent>
-                {(recipes || []).map(recipe => (
-                  <SelectItem key={recipe.id} value={recipe.id}>{recipe.name}</SelectItem>
+                {(recipes || []).map((recipe) => (
+                  <SelectItem key={recipe.id} value={recipe.id}>
+                    {recipe.name}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -144,7 +166,9 @@ export const CalculatorDialog = ({ isOpen, onOpenChange, recipes, onRegisterBatc
             />
           </div>
 
-          <Button onClick={calculateFeed} className="w-full">Calcular Ingredientes</Button>
+          <Button onClick={calculateFeed} className="w-full">
+            Calcular Ingredientes
+          </Button>
 
           {result && (
             <>
@@ -153,9 +177,7 @@ export const CalculatorDialog = ({ isOpen, onOpenChange, recipes, onRegisterBatc
                 <Button variant="outline" onClick={() => setResult(null)}>
                   Refazer cálculo
                 </Button>
-                <Button onClick={handleRegister}>
-                  Registrar no Armazém
-                </Button>
+                <Button onClick={handleRegister}>Registrar no Armazém</Button>
               </div>
             </>
           )}

@@ -1,9 +1,10 @@
 // src/lib/dairies.service.js
-const KEY_MY_DAIRIES = 'milktech:my_dairies';
+const KEY_MY_DAIRIES = "milktech:my_dairies";
 const KEY_MY_DAIRY_PRICES = (id) => `milktech:my_dairy_prices:${id}`;
 
 const sameDay = (a, b) => {
-  const da = new Date(a), db = new Date(b);
+  const da = new Date(a),
+    db = new Date(b);
   return (
     da.getFullYear() === db.getFullYear() &&
     da.getMonth() === db.getMonth() &&
@@ -11,9 +12,12 @@ const sameDay = (a, b) => {
   );
 };
 
-function read(key, fallback = '[]') {
-  try { return JSON.parse(localStorage.getItem(key) || fallback); }
-  catch { return JSON.parse(fallback); }
+function read(key, fallback = "[]") {
+  try {
+    return JSON.parse(localStorage.getItem(key) || fallback);
+  } catch {
+    return JSON.parse(fallback);
+  }
 }
 function write(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
@@ -25,7 +29,7 @@ function normalizeDateMaybeISO(d) {
   if (!d) return new Date().toISOString();
   // se vier no formato "YYYY-MM-DD", cria Date local e exporta ISO
   if (/^\d{4}-\d{2}-\d{2}$/.test(d)) {
-    const [y, m, day] = d.split('-').map(Number);
+    const [y, m, day] = d.split("-").map(Number);
     const dt = new Date(y, m - 1, day, 12, 0, 0); // 12:00 para evitar fuso virar dia anterior
     return dt.toISOString();
   }
@@ -37,7 +41,7 @@ function normalizeDateMaybeISO(d) {
 export const dairiesService = {
   // --------- Laticínios pessoais
   listMyDairies(ownerId) {
-    return read(KEY_MY_DAIRIES).filter(d => d.owner_id === ownerId);
+    return read(KEY_MY_DAIRIES).filter((d) => d.owner_id === ownerId);
   },
 
   createMyDairy(ownerId, dto) {
@@ -48,13 +52,13 @@ export const dairiesService = {
       owner_id: ownerId,
       // básicos
       name: dto.name?.trim(),
-      cnpj: dto.cnpj?.trim() || '',
-      phone: dto.phone?.trim() || '',
-      responsavel: dto.responsavel?.trim() || '',
+      cnpj: dto.cnpj?.trim() || "",
+      phone: dto.phone?.trim() || "",
+      responsavel: dto.responsavel?.trim() || "",
       // endereço (opcional)
-      address: dto.address?.trim() || '',
-      city: dto.city?.trim() || '',
-      state: dto.state?.trim()?.toUpperCase() || '',
+      address: dto.address?.trim() || "",
+      city: dto.city?.trim() || "",
+      state: dto.state?.trim()?.toUpperCase() || "",
       created_at: now,
       updated_at: now,
     };
@@ -65,7 +69,7 @@ export const dairiesService = {
 
   updateMyDairy(id, dto) {
     const all = read(KEY_MY_DAIRIES);
-    const updated = all.map(d =>
+    const updated = all.map((d) =>
       d.id === id
         ? {
             ...d,
@@ -78,14 +82,14 @@ export const dairiesService = {
             ...(dto.state != null ? { state: dto.state.trim().toUpperCase() } : {}),
             updated_at: new Date().toISOString(),
           }
-        : d
+        : d,
     );
     write(KEY_MY_DAIRIES, updated);
-    return updated.find(d => d.id === id);
+    return updated.find((d) => d.id === id);
   },
 
   deleteMyDairy(id) {
-    const all = read(KEY_MY_DAIRIES).filter(d => d.id !== id);
+    const all = read(KEY_MY_DAIRIES).filter((d) => d.id !== id);
     write(KEY_MY_DAIRIES, all);
     // também remove histórico de preços
     localStorage.removeItem(KEY_MY_DAIRY_PRICES(id));
@@ -101,7 +105,7 @@ export const dairiesService = {
     const eff = normalizeDateMaybeISO(date);
 
     // se já existir um preço na MESMA DATA, atualiza em vez de criar outro
-    const idxSame = prices.findIndex(p => sameDay(p.effective_at, eff));
+    const idxSame = prices.findIndex((p) => sameDay(p.effective_at, eff));
     const entry = {
       id: idxSame >= 0 ? prices[idxSame].id : Date.now().toString(),
       dairy_id: dairyId,
@@ -121,7 +125,7 @@ export const dairiesService = {
 
   updateMyDairyPrice(dairyId, priceId, payload) {
     const prices = read(KEY_MY_DAIRY_PRICES(dairyId));
-    const idx = prices.findIndex(p => p.id === priceId);
+    const idx = prices.findIndex((p) => p.id === priceId);
     if (idx === -1) return null;
 
     const next = {
@@ -138,7 +142,7 @@ export const dairiesService = {
   },
 
   deleteMyDairyPrice(dairyId, priceId) {
-    const prices = read(KEY_MY_DAIRY_PRICES(dairyId)).filter(p => p.id !== priceId);
+    const prices = read(KEY_MY_DAIRY_PRICES(dairyId)).filter((p) => p.id !== priceId);
     write(KEY_MY_DAIRY_PRICES(dairyId), prices);
   },
 

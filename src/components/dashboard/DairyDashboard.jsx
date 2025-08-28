@@ -1,10 +1,10 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { DollarSign, Truck, TrendingUp } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
+import React from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { DollarSign, Truck, TrendingUp } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 export const DairyDashboard = ({ user }) => {
   const cardVariants = {
@@ -20,7 +20,9 @@ export const DairyDashboard = ({ user }) => {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Dashboard da Queijaria</h1>
-        <p className="text-gray-600">Bem-vindo, {user?.name || 'usuário'}! Gerencie sua queijaria aqui.</p>
+        <p className="text-gray-600">
+          Bem-vindo, {user?.name || "usuário"}! Gerencie sua queijaria aqui.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -85,7 +87,8 @@ export const DairyDashboard = ({ user }) => {
                 variant="outline"
                 onClick={() =>
                   toast({
-                    title: '🚧 Esta funcionalidade ainda não foi implementada—mas não se preocupe! Você pode solicitá-la no seu próximo prompt! 🚀',
+                    title:
+                      "🚧 Esta funcionalidade ainda não foi implementada—mas não se preocupe! Você pode solicitá-la no seu próximo prompt! 🚀",
                   })
                 }
                 aria-label="Relatórios (em breve)"

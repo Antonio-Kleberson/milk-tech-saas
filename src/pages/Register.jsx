@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { toast } from '@/components/ui/use-toast';
-import { Milk } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "@/components/ui/use-toast";
+import { Milk } from "lucide-react";
+import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    phone: '',
-    city: '',
-    state: '',
-    role: 'producer'
+    name: "",
+    email: "",
+    password: "",
+    phone: "",
+    city: "",
+    state: "",
+    role: "producer",
   });
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
@@ -27,7 +27,7 @@ const Register = () => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -44,28 +44,28 @@ const Register = () => {
         phone: formData.phone.trim(),
         city: formData.city.trim(),
         state: formData.state.trim().toUpperCase(), // mantém “SP”
-        role: formData.role
+        role: formData.role,
       };
       const { user, error } = await register(payload);
 
       if (error) {
         toast({
-          title: 'Erro no cadastro',
+          title: "Erro no cadastro",
           description: error,
-          variant: 'destructive',
+          variant: "destructive",
         });
       } else {
         toast({
-          title: 'Cadastro realizado com sucesso!',
+          title: "Cadastro realizado com sucesso!",
           description: `Bem-vindo, ${user.name}!`,
         });
-        navigate('/dashboard');
+        navigate("/dashboard");
       }
     } catch (error) {
       toast({
-        title: 'Erro no cadastro',
-        description: 'Ocorreu um erro inesperado. Tente novamente.',
-        variant: 'destructive',
+        title: "Erro no cadastro",
+        description: "Ocorreu um erro inesperado. Tente novamente.",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -76,9 +76,15 @@ const Register = () => {
     <>
       <Helmet>
         <title>Cadastro - MilkTech</title>
-        <meta name="description" content="Cadastre-se na plataforma MilkTech e comece a gerenciar suas atividades no setor leiteiro de forma eficiente." />
+        <meta
+          name="description"
+          content="Cadastre-se na plataforma MilkTech e comece a gerenciar suas atividades no setor leiteiro de forma eficiente."
+        />
         <meta property="og:title" content="Cadastro - MilkTech" />
-        <meta property="og:description" content="Cadastre-se na plataforma MilkTech e comece a gerenciar suas atividades no setor leiteiro de forma eficiente." />
+        <meta
+          property="og:description"
+          content="Cadastre-se na plataforma MilkTech e comece a gerenciar suas atividades no setor leiteiro de forma eficiente."
+        />
       </Helmet>
 
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50 p-4">
@@ -101,9 +107,7 @@ const Register = () => {
           <Card>
             <CardHeader>
               <CardTitle>Criar sua conta</CardTitle>
-              <CardDescription>
-                Preencha os dados para se cadastrar no sistema
-              </CardDescription>
+              <CardDescription>Preencha os dados para se cadastrar no sistema</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -196,7 +200,7 @@ const Register = () => {
                         type="radio"
                         name="role"
                         value="producer"
-                        checked={formData.role === 'producer'}
+                        checked={formData.role === "producer"}
                         onChange={handleChange}
                         className="form-radio h-4 w-4 text-green-600 border-gray-300 focus:ring-green-500"
                       />
@@ -207,7 +211,7 @@ const Register = () => {
                         type="radio"
                         name="role"
                         value="dairy"
-                        checked={formData.role === 'dairy'}
+                        checked={formData.role === "dairy"}
                         onChange={handleChange}
                         className="form-radio h-4 w-4 text-green-600 border-gray-300 focus:ring-green-500"
                       />
@@ -216,22 +220,15 @@ const Register = () => {
                   </div>
                 </div>
 
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={loading}
-                >
-                  {loading ? 'Cadastrando...' : 'Cadastrar'}
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? "Cadastrando..." : "Cadastrar"}
                 </Button>
               </form>
 
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-600">
-                  Já tem uma conta?{' '}
-                  <Link
-                    to="/login"
-                    className="font-medium text-green-600 hover:text-green-500"
-                  >
+                  Já tem uma conta?{" "}
+                  <Link to="/login" className="font-medium text-green-600 hover:text-green-500">
                     Faça login aqui
                   </Link>
                 </p>

@@ -55,14 +55,20 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
   }
 }
 
 @layer utilities {
-  .touch-target { @apply px-4 py-3; }            /* área de toque maior */
-  .card-stack    { @apply flex flex-col gap-3; }  /* listas em card */
-  .text-wrap     { @apply break-words; }          /* quebras seguras */
+  .touch-target {
+    @apply px-4 py-3;
+  } /* área de toque maior */
+  .card-stack {
+    @apply flex flex-col gap-3;
+  } /* listas em card */
+  .text-wrap {
+    @apply break-words;
+  } /* quebras seguras */
 }
 
 .milk-gradient {

@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { storage } from '@/lib/storage';
-import { MapPin, ExternalLink, Search, Phone } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import React, { useEffect, useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { storage } from "@/lib/storage";
+import { MapPin, ExternalLink, Search, Phone } from "lucide-react";
+import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 
 const Tanks = () => {
   const [tanks, setTanks] = useState([]);
   const [filteredTanks, setFilteredTanks] = useState([]);
-  const [searchCity, setSearchCity] = useState('');
+  const [searchCity, setSearchCity] = useState("");
 
   useEffect(() => {
     loadTanks();
@@ -34,23 +34,23 @@ const Tanks = () => {
   };
 
   const filterTanks = () => {
-    const term = (searchCity || '').trim().toLowerCase();
+    const term = (searchCity || "").trim().toLowerCase();
     if (!term) {
       setFilteredTanks(tanks);
       return;
     }
     const filtered = tanks.filter((tank) => {
-      const city = (tank.city || '').toLowerCase();
-      const state = (tank.state || '').toLowerCase();
+      const city = (tank.city || "").toLowerCase();
+      const state = (tank.state || "").toLowerCase();
       return city.includes(term) || state.includes(term);
     });
     setFilteredTanks(filtered);
   };
 
   const openInGoogleMaps = (tank) => {
-    const addr = [tank.address, tank.city, tank.state].filter(Boolean).join(', ');
-    const query = encodeURIComponent(addr || tank.name || 'Tanque de leite');
-    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+    const addr = [tank.address, tank.city, tank.state].filter(Boolean).join(", ");
+    const query = encodeURIComponent(addr || tank.name || "Tanque de leite");
+    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, "_blank");
   };
 
   return (
@@ -113,7 +113,8 @@ const Tanks = () => {
                       <CardTitle className="text-xl">{tank.name}</CardTitle>
                       <CardDescription className="flex items-center mt-1">
                         <MapPin className="h-4 w-4 mr-1" />
-                        {[tank.address, tank.city, tank.state].filter(Boolean).join(', ') || 'Endereço não informado'}
+                        {[tank.address, tank.city, tank.state].filter(Boolean).join(", ") ||
+                          "Endereço não informado"}
                       </CardDescription>
                       {tank.dairy && (
                         <p className="text-sm text-gray-600 mt-1">
@@ -121,7 +122,11 @@ const Tanks = () => {
                         </p>
                       )}
                     </div>
-                    <Button variant="outline" onClick={() => openInGoogleMaps(tank)} className="flex items-center">
+                    <Button
+                      variant="outline"
+                      onClick={() => openInGoogleMaps(tank)}
+                      className="flex items-center"
+                    >
                       <ExternalLink className="h-4 w-4 mr-1" />
                       Ver no Mapa
                     </Button>
@@ -133,8 +138,8 @@ const Tanks = () => {
                       <div className="flex items-center">
                         <Phone className="h-4 w-4 mr-2 text-gray-500" />
                         <div>
-                          <p className="font-medium">{tank.responsible_name || '—'}</p>
-                          <p className="text-sm text-gray-600">{tank.responsible_phone || '—'}</p>
+                          <p className="font-medium">{tank.responsible_name || "—"}</p>
+                          <p className="text-sm text-gray-600">{tank.responsible_phone || "—"}</p>
                         </div>
                       </div>
                     </div>
@@ -142,10 +147,10 @@ const Tanks = () => {
                     {tank.dairy && (
                       <div className="space-y-1">
                         <p className="text-sm">
-                          <span className="font-medium">CNPJ:</span> {tank.dairy.cnpj || '—'}
+                          <span className="font-medium">CNPJ:</span> {tank.dairy.cnpj || "—"}
                         </p>
                         <p className="text-sm">
-                          <span className="font-medium">Telefone:</span> {tank.dairy.phone || '—'}
+                          <span className="font-medium">Telefone:</span> {tank.dairy.phone || "—"}
                         </p>
                       </div>
                     )}
@@ -159,7 +164,9 @@ const Tanks = () => {
             <Card>
               <CardContent className="text-center py-12">
                 <p className="text-gray-500">
-                  {searchCity ? 'Nenhum tanque encontrado para esta busca' : 'Nenhum tanque cadastrado'}
+                  {searchCity
+                    ? "Nenhum tanque encontrado para esta busca"
+                    : "Nenhum tanque cadastrado"}
                 </p>
               </CardContent>
             </Card>

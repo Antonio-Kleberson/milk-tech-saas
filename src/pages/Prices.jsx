@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { storage } from '@/lib/storage';
-import { MapPin, ExternalLink, Clock } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
-import { getDaysAgo, formatDate } from '@/lib/dateUtils';
+import React, { useEffect, useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { storage } from "@/lib/storage";
+import { MapPin, ExternalLink, Clock } from "lucide-react";
+import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
+import { getDaysAgo, formatDate } from "@/lib/dateUtils";
 
 const Prices = () => {
   const [dairiesWithPrices, setDairiesWithPrices] = useState([]);
@@ -18,35 +18,43 @@ const Prices = () => {
     const dairies = storage.getDairies();
     const prices = storage.getMilkPrices();
 
-    const data = dairies.map(dairy => {
-      const latestPrice = prices
-        .filter(p => p.dairy_id === dairy.id)
-        .sort((a, b) => new Date(b.effective_at) - new Date(a.effective_at))[0];
+    const data = dairies
+      .map((dairy) => {
+        const latestPrice = prices
+          .filter((p) => p.dairy_id === dairy.id)
+          .sort((a, b) => new Date(b.effective_at) - new Date(a.effective_at))[0];
 
-      return {
-        ...dairy,
-        price: latestPrice?.price_per_liter || 0,
-        lastUpdated: latestPrice?.effective_at,
-        daysAgo: getDaysAgo(latestPrice?.effective_at)
-      };
-    }).sort((a, b) => b.price - a.price);
+        return {
+          ...dairy,
+          price: latestPrice?.price_per_liter || 0,
+          lastUpdated: latestPrice?.effective_at,
+          daysAgo: getDaysAgo(latestPrice?.effective_at),
+        };
+      })
+      .sort((a, b) => b.price - a.price);
 
     setDairiesWithPrices(data);
   };
 
   const openInGoogleMaps = (dairy) => {
-    const addr = [dairy.address, dairy.city, dairy.state].filter(Boolean).join(', ');
+    const addr = [dairy.address, dairy.city, dairy.state].filter(Boolean).join(", ");
     const query = encodeURIComponent(addr || dairy.trade_name);
-    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, "_blank");
   };
 
   return (
     <>
       <Helmet>
         <title>Preços do Leite - MilkTech</title>
-        <meta name="description" content="Compare os preços do leite oferecidos pelas queijarias da sua região e encontre as melhores oportunidades." />
+        <meta
+          name="description"
+          content="Compare os preços do leite oferecidos pelas queijarias da sua região e encontre as melhores oportunidades."
+        />
         <meta property="og:title" content="Preços do Leite - MilkTech" />
-        <meta property="og:description" content="Compare os preços do leite oferecidos pelas queijarias da sua região e encontre as melhores oportunidades." />
+        <meta
+          property="og:description"
+          content="Compare os preços do leite oferecidos pelas queijarias da sua região e encontre as melhores oportunidades."
+        />
       </Helmet>
 
       <div className="space-y-6">
@@ -70,7 +78,8 @@ const Prices = () => {
                       <CardTitle className="text-xl">{dairy.trade_name}</CardTitle>
                       <CardDescription className="flex items-center mt-1">
                         <MapPin className="h-4 w-4 mr-1" />
-                        {[dairy.address, dairy.city, dairy.state].filter(Boolean).join(', ') || 'Endereço não informado'}
+                        {[dairy.address, dairy.city, dairy.state].filter(Boolean).join(", ") ||
+                          "Endereço não informado"}
                       </CardDescription>
                     </div>
                     <div className="text-left sm:text-right">
@@ -87,8 +96,8 @@ const Prices = () => {
                       <Clock className="h-4 w-4 mr-1" />
                       {dairy.lastUpdated ? (
                         <span>
-                          Atualizado há {dairy.daysAgo} {dairy.daysAgo === 1 ? 'dia' : 'dias'}
-                          ({formatDate(dairy.lastUpdated)})
+                          Atualizado há {dairy.daysAgo} {dairy.daysAgo === 1 ? "dia" : "dias"}(
+                          {formatDate(dairy.lastUpdated)})
                         </span>
                       ) : (
                         <span>Preço não informado</span>
@@ -108,10 +117,10 @@ const Prices = () => {
                   <div className="mt-4 pt-4 border-t">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                       <div>
-                        <span className="font-medium">CNPJ:</span> {dairy.cnpj || '—'}
+                        <span className="font-medium">CNPJ:</span> {dairy.cnpj || "—"}
                       </div>
                       <div>
-                        <span className="font-medium">Telefone:</span> {dairy.phone || '—'}
+                        <span className="font-medium">Telefone:</span> {dairy.phone || "—"}
                       </div>
                     </div>
                   </div>

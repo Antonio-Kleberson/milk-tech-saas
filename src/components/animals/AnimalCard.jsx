@@ -36,7 +36,7 @@ export const AnimalCard = ({
   const birthText = birthDate ? formatDate(birthDate) : "—";
 
   const lastMovs = Array.isArray(movements)
-    ? [...movements].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,3)
+    ? [...movements].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3)
     : [];
 
   // estado reprodutivo simples
@@ -56,7 +56,7 @@ export const AnimalCard = ({
               <CardTitle className="flex items-center flex-wrap gap-2">
                 {animal.name}
                 <Badge variant="secondary">Brinco: {animal.earring}</Badge>
-                {animal.status && animal.status !== 'ativo' && (
+                {animal.status && animal.status !== "ativo" && (
                   <Badge variant="destructive">{animal.status}</Badge>
                 )}
               </CardTitle>
@@ -66,27 +66,50 @@ export const AnimalCard = ({
             </div>
 
             <div className="flex flex-wrap gap-2 shrink-0">
-              <Button variant="outline" size="sm" onClick={() => onAddVaccine?.(animal)} title="Adicionar vacina">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onAddVaccine?.(animal)}
+                title="Adicionar vacina"
+              >
                 <Syringe className="h-4 w-4 mr-1" aria-hidden="true" />
                 Vacina
               </Button>
 
-              <Button variant="outline" size="sm" onClick={() => onAddMovement?.(animal)} title="Registrar movimentação">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onAddMovement?.(animal)}
+                title="Registrar movimentação"
+              >
                 Mov.
               </Button>
 
-              <Button variant="outline" size="sm" onClick={() => onAddRepro?.(animal)} title="Registrar evento reprodutivo">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onAddRepro?.(animal)}
+                title="Registrar evento reprodutivo"
+              >
                 Repro.
               </Button>
 
-              <Button variant="outline" size="sm" onClick={() => onEditAnimal?.(animal)} title="Editar animal">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onEditAnimal?.(animal)}
+                title="Editar animal"
+              >
                 <Edit className="h-4 w-4" aria-hidden="true" />
               </Button>
 
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => { if (confirm("Tem certeza que deseja excluir este animal?")) onDeleteAnimal?.(animal.id); }}
+                onClick={() => {
+                  if (confirm("Tem certeza que deseja excluir este animal?"))
+                    onDeleteAnimal?.(animal.id);
+                }}
                 title="Excluir animal"
               >
                 <Trash2 className="h-4 w-4" aria-hidden="true" />
@@ -101,18 +124,29 @@ export const AnimalCard = ({
             <div className="rounded-md border p-3 text-sm bg-white">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-semibold">Reprodução:</span>
-                {repro.status === 'prenhe' && (
+                {repro.status === "prenhe" && (
                   <>
                     <Badge className="bg-green-600 text-white">Prenhe</Badge>
-                    {repro.dpp && <span>DPP: <strong>{formatDate(repro.dpp)}</strong></span>}
+                    {repro.dpp && (
+                      <span>
+                        DPP: <strong>{formatDate(repro.dpp)}</strong>
+                      </span>
+                    )}
                   </>
                 )}
-                {repro.status === 'servida' && <Badge className="bg-amber-500 text-white">Servida</Badge>}
-                {repro.status === 'vazia' && <Badge>Vazia</Badge>}
+                {repro.status === "servida" && (
+                  <Badge className="bg-amber-500 text-white">Servida</Badge>
+                )}
+                {repro.status === "vazia" && <Badge>Vazia</Badge>}
               </div>
               <div className="mt-1 text-gray-600">
                 {repro.service && <>Última IA/Cobertura: {formatDate(repro.service.date)}. </>}
-                {repro.diagnosis && <>Último diagnóstico: {repro.diagnosis.result} em {formatDate(repro.diagnosis.date)}.</>}
+                {repro.diagnosis && (
+                  <>
+                    Último diagnóstico: {repro.diagnosis.result} em{" "}
+                    {formatDate(repro.diagnosis.date)}.
+                  </>
+                )}
               </div>
             </div>
           </CardContent>
@@ -124,17 +158,31 @@ export const AnimalCard = ({
             <div className="rounded-md border p-3 text-sm bg-white">
               <div className="font-semibold mb-2">Movimentações recentes</div>
               <ul className="space-y-1">
-                {lastMovs.map(m => (
+                {lastMovs.map((m) => (
                   <li key={m.id} className="flex items-center justify-between gap-2">
                     <span className="text-gray-700">
                       {formatDate(m.date)} — {m.type}
-                      {(m.type === 'compra' || m.type === 'venda') && m.amount != null && (
+                      {(m.type === "compra" || m.type === "venda") && m.amount != null && (
                         <> • {toBRL(m.amount)}</>
                       )}
                     </span>
                     <div className="shrink-0 flex gap-1">
-                      <Button variant="ghost" size="sm" onClick={() => onEditMovement?.(m)} title="Editar">Editar</Button>
-                      <Button variant="ghost" size="sm" onClick={() => onDeleteMovement?.(m.id)} title="Excluir">Excluir</Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onEditMovement?.(m)}
+                        title="Editar"
+                      >
+                        Editar
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onDeleteMovement?.(m.id)}
+                        title="Excluir"
+                      >
+                        Excluir
+                      </Button>
                     </div>
                   </li>
                 ))}

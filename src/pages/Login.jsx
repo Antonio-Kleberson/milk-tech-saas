@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { toast } from '@/components/ui/use-toast';
-import { Milk } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "@/components/ui/use-toast";
+import { Milk } from "lucide-react";
+import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -23,25 +23,25 @@ const Login = () => {
 
     try {
       const { user, error } = await login(email.trim(), password.trim());
-      
+
       if (error) {
         toast({
-          title: 'Erro no login',
+          title: "Erro no login",
           description: error,
-          variant: 'destructive',
+          variant: "destructive",
         });
       } else {
         toast({
-          title: 'Login realizado com sucesso!',
+          title: "Login realizado com sucesso!",
           description: `Bem-vindo, ${user.name}!`,
         });
-        navigate('/dashboard');
+        navigate("/dashboard");
       }
     } catch (error) {
       toast({
-        title: 'Erro no login',
-        description: 'Ocorreu um erro inesperado. Tente novamente.',
-        variant: 'destructive',
+        title: "Erro no login",
+        description: "Ocorreu um erro inesperado. Tente novamente.",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -52,11 +52,17 @@ const Login = () => {
     <>
       <Helmet>
         <title>Login - MilkTech</title>
-        <meta name="description" content="Faça login na plataforma MilkTech para acessar sua conta e gerenciar suas atividades no setor leiteiro." />
+        <meta
+          name="description"
+          content="Faça login na plataforma MilkTech para acessar sua conta e gerenciar suas atividades no setor leiteiro."
+        />
         <meta property="og:title" content="Login - MilkTech" />
-        <meta property="og:description" content="Faça login na plataforma MilkTech para acessar sua conta e gerenciar suas atividades no setor leiteiro." />
+        <meta
+          property="og:description"
+          content="Faça login na plataforma MilkTech para acessar sua conta e gerenciar suas atividades no setor leiteiro."
+        />
       </Helmet>
-      
+
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50 p-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -77,9 +83,7 @@ const Login = () => {
           <Card>
             <CardHeader>
               <CardTitle>Entrar na sua conta</CardTitle>
-              <CardDescription>
-                Digite suas credenciais para acessar o sistema
-              </CardDescription>
+              <CardDescription>Digite suas credenciais para acessar o sistema</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -94,7 +98,7 @@ const Login = () => {
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="password">Senha</Label>
                   <Input
@@ -107,22 +111,15 @@ const Login = () => {
                   />
                 </div>
 
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={loading}
-                >
-                  {loading ? 'Entrando...' : 'Entrar'}
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? "Entrando..." : "Entrar"}
                 </Button>
               </form>
 
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-600">
-                  Não tem uma conta?{' '}
-                  <Link
-                    to="/register"
-                    className="font-medium text-green-600 hover:text-green-500"
-                  >
+                  Não tem uma conta?{" "}
+                  <Link to="/register" className="font-medium text-green-600 hover:text-green-500">
                     Cadastre-se aqui
                   </Link>
                 </p>
