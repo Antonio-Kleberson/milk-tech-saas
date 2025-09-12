@@ -1,102 +1,195 @@
 // src/lib/dateUtils.js
-const safeDate = (input) => {
-  const d = input instanceof Date ? input : new Date(input);
-  return Number.isFinite(d.getTime()) ? d : null;
+
+// valida se é uma string YYYY-MM-DD válida
+const isValidDateString = (str) => {
+  return typeof str === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(str);
 };
 
-export const formatDate = (
-  dateString,
-  options = { day: "2-digit", month: "2-digit", year: "numeric" },
-) => {
+// converte qualquer input para YYYY-MM-DD string
+const normalizeToDateString = (input) => {
+  if (isValidDateString(input)) {
+    return input;
+  }
+  
+  if (input instanceof Date && !isNaN(input.getTime())) {
+    return input.toISOString().split('T')[0];
+  }
+  
+  if (typeof input === 'string') {
+    const d = new Date(input);
+    if (!isNaN(d.getTime())) {
+      return d.toISOString().split('T')[0];
+    }
+  }
+  
+  return null;
+};
+
+// hoje como YYYY-MM-DD
+export const today = () => {
+  return new Date().toISOString().split('T')[0];
+};
+
+// formata YYYY-MM-DD para dd/mm/aaaa (sempre consistente)
+export const formatDate = (dateString, format = 'dd/mm/yyyy') => {
   if (!dateString) return "N/A";
-  const d = safeDate(dateString);
-  if (!d) return "Data inválida";
-  try {
-    return d.toLocaleDateString("pt-BR", options);
-  } catch {
-    return "Data inválida";
+  
+  const normalized = normalizeToDateString(dateString);
+  if (!normalized) return "Data inválida";
+  
+  const [year, month, day] = normalized.split('-');
+  
+  switch (format) {
+    case 'dd/mm/yyyy':
+      return `${day}/${month}/${year}`;
+    case 'dd/mm':
+      return `${day}/${month}`;
+    case 'mm/yyyy':
+      return `${month}/${year}`;
+    default:
+      return normalized; // retorna YYYY-MM-DD
   }
 };
 
-export const ageInMonths = (birthDate) => {
-  const b = safeDate(birthDate);
-  if (!b) return null;
-  const today = new Date();
-
-  let months = (today.getFullYear() - b.getFullYear()) * 12 + (today.getMonth() - b.getMonth());
-  // Ajuste pelo dia do mês (se ainda não “fez” o mês corrente)
-  if (today.getDate() < b.getDate()) months -= 1;
+// calcula idade em meses baseado em strings YYYY-MM-DD
+export const ageInMonths = (birthDateString) => {
+  const birthStr = normalizeToDateString(birthDateString);
+  const todayStr = today();
+  
+  if (!birthStr) return null;
+  
+  const [birthYear, birthMonth, birthDay] = birthStr.split('-').map(Number);
+  const [todayYear, todayMonth, todayDay] = todayStr.split('-').map(Number);
+  
+  let months = (todayYear - birthYear) * 12 + (todayMonth - birthMonth);
+  
+  // ajuste pelo dia do mês
+  if (todayDay < birthDay) {
+    months -= 1;
+  }
+  
   return Math.max(months, 0);
 };
 
-export const calculateAge = (birthDate) => {
-  if (!birthDate) return "Idade desconhecida";
-  const b = safeDate(birthDate);
-  if (!b) return "Data de nascimento inválida";
-
-  const m = ageInMonths(birthDate);
-  if (m === null) return "Idade desconhecida";
-  if (m < 12) {
-    return `${m} ${m === 1 ? "mês" : "meses"}`;
+// calcula idade formatada
+export const calculateAge = (birthDateString) => {
+  if (!birthDateString) return "Idade desconhecida";
+  
+  const months = ageInMonths(birthDateString);
+  if (months === null) return "Data de nascimento inválida";
+  
+  if (months < 12) {
+    return `${months} ${months === 1 ? "mês" : "meses"}`;
   }
-  const years = Math.floor(m / 12);
-  const rem = m % 12;
-  return `${years} ${years === 1 ? "ano" : "anos"}${rem > 0 ? ` e ${rem} ${rem === 1 ? "mês" : "meses"}` : ""}`;
+  
+  const years = Math.floor(months / 12);
+  const remainingMonths = months % 12;
+  
+  let result = `${years} ${years === 1 ? "ano" : "anos"}`;
+  if (remainingMonths > 0) {
+    result += ` e ${remainingMonths} ${remainingMonths === 1 ? "mês" : "meses"}`;
+  }
+  
+  return result;
 };
 
-export const monthsBetween = (fromDate, toDate = new Date()) => {
-  const a = safeDate(fromDate);
-  const b = safeDate(toDate);
-  if (!a || !b) return null;
-  let months = (b.getFullYear() - a.getFullYear()) * 12 + (b.getMonth() - a.getMonth());
-  if (b.getDate() < a.getDate()) months -= 1;
+// meses entre duas datas
+export const monthsBetween = (fromDateString, toDateString = null) => {
+  const fromStr = normalizeToDateString(fromDateString);
+  const toStr = toDateString ? normalizeToDateString(toDateString) : today();
+  
+  if (!fromStr || !toStr) return null;
+  
+  const [fromYear, fromMonth, fromDay] = fromStr.split('-').map(Number);
+  const [toYear, toMonth, toDay] = toStr.split('-').map(Number);
+  
+  let months = (toYear - fromYear) * 12 + (toMonth - fromMonth);
+  
+  if (toDay < fromDay) {
+    months -= 1;
+  }
+  
   return months;
 };
 
-export const startOfDay = (dateInput = new Date()) => {
-  const d = safeDate(dateInput);
-  if (!d) return null;
-  const x = new Date(d);
-  x.setHours(0, 0, 0, 0);
-  return x;
+// adiciona dias a uma data YYYY-MM-DD
+export const addDays = (dateString, days) => {
+  const normalized = normalizeToDateString(dateString);
+  if (!normalized || !Number.isFinite(days)) return null;
+  
+  const date = new Date(normalized + 'T00:00:00.000Z');
+  date.setUTCDate(date.getUTCDate() + Number(days));
+  
+  return date.toISOString().split('T')[0];
 };
 
-export const endOfDay = (dateInput = new Date()) => {
-  const d = safeDate(dateInput);
-  if (!d) return null;
-  const x = new Date(d);
-  x.setHours(23, 59, 59, 999);
-  return x;
+// subtrai dias de uma data YYYY-MM-DD
+export const subtractDays = (dateString, days) => {
+  return addDays(dateString, -days);
 };
 
-export const addDays = (dateInput, days) => {
-  const d = safeDate(dateInput);
-  if (!d || !Number.isFinite(days)) return null;
-  const x = new Date(d);
-  x.setDate(x.getDate() + Number(days));
-  return x;
+// converte para YYYY-MM-DD (alias para compatibilidade)
+export const toISODate = (dateInput) => {
+  return normalizeToDateString(dateInput);
 };
 
-export const toISODate = (dateInput = new Date()) => {
-  const d = safeDate(dateInput);
-  if (!d) return null;
-  const x = startOfDay(d);
-  // YYYY-MM-DD
-  return x ? x.toISOString().slice(0, 10) : null;
-};
-
+// quantos dias atrás foi uma data
 export const getDaysAgo = (dateString) => {
-  const target = startOfDay(dateString);
-  const today = startOfDay(new Date());
-  if (!target || !today) return null;
-  const diffMs = today - target;
-  return Math.floor(diffMs / 86400000);
+  const targetStr = normalizeToDateString(dateString);
+  const todayStr = today();
+  
+  if (!targetStr) return null;
+  
+  const targetDate = new Date(targetStr + 'T00:00:00.000Z');
+  const todayDate = new Date(todayStr + 'T00:00:00.000Z');
+  
+  const diffMs = todayDate.getTime() - targetDate.getTime();
+  return Math.floor(diffMs / (24 * 60 * 60 * 1000));
 };
 
+// quantos dias até uma data
 export const getDaysUntil = (dateString) => {
-  const target = startOfDay(dateString);
-  const today = startOfDay(new Date());
-  if (!target || !today) return null;
-  const diffMs = target - today;
-  return Math.ceil(diffMs / 86400000);
+  const targetStr = normalizeToDateString(dateString);
+  const todayStr = today();
+  
+  if (!targetStr) return null;
+  
+  const targetDate = new Date(targetStr + 'T00:00:00.000Z');
+  const todayDate = new Date(todayStr + 'T00:00:00.000Z');
+  
+  const diffMs = targetDate.getTime() - todayDate.getTime();
+  return Math.ceil(diffMs / (24 * 60 * 60 * 1000));
+};
+
+// verifica se uma data é hoje
+export const isToday = (dateString) => {
+  const normalized = normalizeToDateString(dateString);
+  return normalized === today();
+};
+
+// verifica se uma data é no passado
+export const isPast = (dateString) => {
+  const days = getDaysAgo(dateString);
+  return days !== null && days > 0;
+};
+
+// verifica se uma data é no futuro
+export const isFuture = (dateString) => {
+  const days = getDaysUntil(dateString);
+  return days !== null && days > 0;
+};
+
+// compara duas datas YYYY-MM-DD (-1, 0, 1)
+export const compareDates = (dateA, dateB) => {
+  const a = normalizeToDateString(dateA);
+  const b = normalizeToDateString(dateB);
+  
+  if (!a || !b) return 0;
+  
+  return a.localeCompare(b);
+};
+
+// helper para validação de inputs de data
+export const isValidDate = (dateString) => {
+  return normalizeToDateString(dateString) !== null;
 };

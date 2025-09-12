@@ -16,6 +16,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { animalMovements } from "@/lib/animal-movements.service";
 import { animalRepro } from "@/lib/animal-repro.service";
 
+const [pendingEarringCount, setPendingEarringCount] = useState(0);
+
 const Animals = () => {
   const { user } = useAuth();
   const [animals, setAnimals] = useState([]);
@@ -44,10 +46,15 @@ const Animals = () => {
     const allVaccines = storage.getVaccines();
     const allMovs = animalMovements.list();
     const allRepros = animalRepro.list();
+
     setAnimals(allAnimals);
     setVaccines(allVaccines);
     setMovements(allMovs);
     setRepros(allRepros);
+
+    //calcula quantos animais estão sem brinco
+    const noEarring = allAnimals.filter((a) => !a.earring || a.earring.trim() === "").length;
+    setPendingEarringCount(noEarring);
   }, [user.id]);
 
   useEffect(() => {
@@ -249,7 +256,44 @@ const Animals = () => {
           </Button>
         </div>
 
-        <div className="grid gap-6">
+        {pendingEarringCount > 0 && (
+          <div className="rounded-md border border-amber-300 bg-amber-50 p-3 flex items-start gap-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-amber-600 mt-0.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L4.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <div className="flex-1 text-sm text-amber-800">
+              Você tem <strong>{pendingEarringCount}</strong>{" "}
+              {pendingEarringCount === 1 ? "animal" : "animais"} sem numeração de brinco.
+              <div className="mt-1">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-amber-300 text-amber-700 hover:bg-amber-100"
+                  onClick={() => {
+                    // rolar até a lista ou no futuro aplicar um filtro de "pendentes"
+                    const el = document.getElementById("animals-list");
+                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                  }}
+                >
+                  Ver animais
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div id="animals-list" className="grid gap-6">
           {animals.map((animal, index) => (
             <AnimalCard
               key={animal.id}

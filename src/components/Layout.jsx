@@ -16,9 +16,13 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-// services/dados
+// services
 import { milkProduction } from "@/lib/milk-production.service";
 import { storage } from "@/lib/storage";
+import { animalService } from "@/lib/animal.service";
+
+const [prodBadge, setProdBadge] = useState(0);
+const [animalsBadge, setAnimalsBadge] = useState(0);
 
 const Badge = ({ count }) => {
   if (!count || count <= 0) return null;
@@ -54,7 +58,7 @@ const Layout = () => {
     if (!user?.id) return;
     const todayISO = localToday();
 
-    // Produção — faltando turnos de hoje
+    // --- Produção: turnos de hoje ---
     const todayList = milkProduction
       .list(user.id, { from: todayISO, to: todayISO })
       .filter((x) => x.date === todayISO);
@@ -63,7 +67,7 @@ const Layout = () => {
     const hasAfternoon = todayList.some((x) => x.shift === "afternoon" && Number(x.liters) > 0);
     setProdBadge((hasMorning ? 0 : 1) + (hasAfternoon ? 0 : 1));
 
-    // Vacinas — vencidas ou próximas (7 dias)
+    // --- Animais (vacinas e brinco) ---
     const animals = storage.getAnimals().filter((a) => a.owner_id === user.id);
     const animalIds = new Set(animals.map((a) => a.id));
     const vaccines = storage.getVaccines().filter((v) => animalIds.has(v.animal_id));
@@ -72,13 +76,17 @@ const Layout = () => {
     const in7 = new Date(today);
     in7.setDate(today.getDate() + 7);
 
-    const needAttention = vaccines.filter((v) => {
+    const vaccineAttention = vaccines.filter((v) => {
       if (!v.next_due_at) return false;
       const d = new Date(v.next_due_at);
       return d < today || (d >= today && d <= in7);
     }).length;
 
-    setAnimalsBadge(needAttention);
+    // ⚠️ Animais sem brinco
+    const noEarring = animalService.countWithoutEarring(user.id);
+
+    // Total badge = vacinas + sem brinco
+    setAnimalsBadge(vaccineAttention + noEarring);
   };
 
   useEffect(() => {

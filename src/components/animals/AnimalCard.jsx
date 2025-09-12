@@ -3,7 +3,7 @@ import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Trash2, Syringe } from "lucide-react";
+import { Edit, Trash2, Syringe, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 import { VaccineList } from "@/components/animals/VaccineList";
 import { formatDate, calculateAge } from "@/lib/dateUtils";
@@ -42,6 +42,10 @@ export const AnimalCard = ({
   // estado reprodutivo simples
   const repro = reproState || null;
 
+  // verifica se precisa de brinco
+  const needsEarring = animal.needs_earring || (!animal.earring && animal.earring !== "0");
+  const earringDisplay = animal.earring || "Sem numeração";
+
   return (
     <motion.div
       key={animal.id}
@@ -49,19 +53,35 @@ export const AnimalCard = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: (index ?? 0) * 0.1 }}
     >
-      <Card>
+      <Card className={needsEarring ? "border-amber-200 bg-amber-50/30" : ""}>
         <CardHeader>
           <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-3">
             <div>
               <CardTitle className="flex items-center flex-wrap gap-2">
                 {animal.name}
-                <Badge variant="secondary">Brinco: {animal.earring}</Badge>
+                
+                {/* Badge do brinco com alerta se necessário */}
+                <Badge 
+                  variant={needsEarring ? "destructive" : "secondary"}
+                  className={needsEarring ? "bg-amber-100 text-amber-800 border-amber-300" : ""}
+                >
+                  {needsEarring && <AlertTriangle className="h-3 w-3 mr-1" />}
+                  Brinco: {earringDisplay}
+                </Badge>
+
+                {/* Status do animal */}
                 {animal.status && animal.status !== "ativo" && (
                   <Badge variant="destructive">{animal.status}</Badge>
                 )}
               </CardTitle>
+              
               <CardDescription>
                 {animal.breed} • {ageText} • Nascido em {birthText}
+                {needsEarring && (
+                  <span className="text-amber-600 font-medium ml-2">
+                    • Pendente numeração
+                  </span>
+                )}
               </CardDescription>
             </div>
 
@@ -98,9 +118,11 @@ export const AnimalCard = ({
                 variant="outline"
                 size="sm"
                 onClick={() => onEditAnimal?.(animal)}
-                title="Editar animal"
+                title={needsEarring ? "Editar animal (adicionar brinco)" : "Editar animal"}
+                className={needsEarring ? "border-amber-300 text-amber-700 hover:bg-amber-50" : ""}
               >
                 <Edit className="h-4 w-4" aria-hidden="true" />
+                {needsEarring && <span className="ml-1 hidden sm:inline">Brinco</span>}
               </Button>
 
               <Button
@@ -117,6 +139,28 @@ export const AnimalCard = ({
             </div>
           </div>
         </CardHeader>
+
+        {/* Alerta de brinco pendente */}
+        {needsEarring && (
+          <CardContent className="pt-0">
+            <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm">
+              <div className="flex items-center gap-2 text-amber-800">
+                <AlertTriangle className="h-4 w-4" />
+                <span className="font-medium">Numeração pendente</span>
+              </div>
+              <p className="mt-1 text-amber-700">
+                Este animal ainda não possui numeração de brinco registrada.{" "}
+                <button
+                  onClick={() => onEditAnimal?.(animal)}
+                  className="underline hover:no-underline font-medium"
+                >
+                  Clique aqui para adicionar
+                </button>
+                .
+              </p>
+            </div>
+          </CardContent>
+        )}
 
         {/* resumo reprodutivo */}
         {repro && (

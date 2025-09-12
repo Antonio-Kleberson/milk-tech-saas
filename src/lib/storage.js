@@ -1,3 +1,4 @@
+// src/lib/storage.js
 // Local storage utilities for data persistence (robusto e compatível)
 
 const KEYS = {
@@ -11,6 +12,8 @@ const KEYS = {
   feedRecipes: "milk_feed_recipes",
   feedRecipeItems: "milk_feed_recipe_items",
 };
+
+// ------------ Helpers internos -------------
 
 const safeParse = (str, fallback) => {
   try {
@@ -30,6 +33,32 @@ const get = (key, fallback) => {
 const set = (key, value) => {
   localStorage.setItem(key, JSON.stringify(value));
 };
+
+// Gerador de ID único
+export const generateId = () =>
+  `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+// Normaliza datas em formato YYYY-MM-DD
+export const normalizeDate = (input) => {
+  if (
+    typeof input === "string" &&
+    /^\d{4}-\d{2}-\d{2}$/.test(input)
+  ) {
+    return input;
+  }
+  if (input instanceof Date && !isNaN(input.getTime())) {
+    return input.toISOString().split("T")[0];
+  }
+  if (typeof input === "string") {
+    const d = new Date(input);
+    if (!isNaN(d.getTime())) {
+      return d.toISOString().split("T")[0];
+    }
+  }
+  return new Date().toISOString().split("T")[0];
+};
+
+// ------------ Storage API -------------
 
 export const storage = {
   // Users
@@ -69,25 +98,35 @@ export const storage = {
   getFeedRecipeItems: () => get(KEYS.feedRecipeItems, []),
   setFeedRecipeItems: (items) => set(KEYS.feedRecipeItems, items),
 
-  // --- Helpers opcionais úteis (não quebram nada) ---
+  // --- Helpers úteis ---
 
   /** Retorna o último preço válido de um laticínio (por data efetiva) */
   getLatestPriceByDairy(dairyId) {
     const prices = get(KEYS.milkPrices, []);
     const list = prices.filter((p) => p.dairy_id === dairyId);
     if (!list.length) return null;
-    list.sort((a, b) => new Date(b.effective_at) - new Date(a.effective_at));
+
+    // Ordenar por string YYYY-MM-DD em vez de new Date para evitar fuso
+    list.sort((a, b) =>
+      normalizeDate(b.effective_at).localeCompare(normalizeDate(a.effective_at))
+    );
     return list[0]; // { price_per_liter, effective_at, ... }
   },
 
   /** Limpa somente dados de demo (se você usar prefixo demo_ nos ids) */
   clearDemoData() {
-    // Exemplo: se no futuro prefixarmos ids com 'demo_', dá pra filtrar
-    // Por enquanto, deixo como placeholder.
+    Object.values(KEYS).forEach((key) => {
+      const list = get(key, []);
+      const filtered = Array.isArray(list)
+        ? list.filter((item) => !String(item.id).startsWith("demo_"))
+        : list;
+      set(key, filtered);
+    });
   },
 };
 
-// Initialize with sample data if empty
+// ------------ Inicialização de dados de exemplo -------------
+
 export const initializeSampleData = () => {
   if (storage.getDairies().length === 0) {
     const now = new Date().toISOString();
@@ -127,14 +166,14 @@ export const initializeSampleData = () => {
         id: "demo_p1",
         dairy_id: "demo_d1",
         price_per_liter: 2.15,
-        effective_at: now,
+        effective_at: normalizeDate(now),
         created_at: now,
       },
       {
         id: "demo_p2",
         dairy_id: "demo_d2",
         price_per_liter: 2.25,
-        effective_at: now,
+        effective_at: normalizeDate(now),
         created_at: now,
       },
     ];
@@ -145,11 +184,8 @@ export const initializeSampleData = () => {
         id: "demo_t1",
         dairy_id: "demo_d1",
         name: "Tanque Central SP",
-        address: "Rua Principal, 789",
         city: "São Paulo",
         state: "SP",
-        lat: -23.5505,
-        lng: -46.6333,
         responsible_name: "João Silva",
         responsible_phone: "(11) 91234-5678",
         created_at: now,
@@ -158,26 +194,10 @@ export const initializeSampleData = () => {
         id: "demo_t2",
         dairy_id: "demo_d1",
         name: "Tanque Zona Norte",
-        address: "Av. Norte, 321",
         city: "São Paulo",
         state: "SP",
-        lat: -23.5205,
-        lng: -46.6133,
         responsible_name: "Maria Santos",
         responsible_phone: "(11) 92345-6789",
-        created_at: now,
-      },
-      {
-        id: "demo_t3",
-        dairy_id: "demo_d2",
-        name: "Tanque MG Central",
-        address: "Rua Central, 654",
-        city: "Belo Horizonte",
-        state: "MG",
-        lat: -19.9167,
-        lng: -43.9345,
-        responsible_name: "Pedro Costa",
-        responsible_phone: "(31) 93456-7890",
         created_at: now,
       },
     ];
@@ -200,7 +220,6 @@ export const initializeSampleData = () => {
     storage.setFeedRecipes(sampleRecipes);
 
     const sampleRecipeItems = [
-      // Receita 1 - 75/20/5
       {
         id: "demo_ri1",
         recipe_id: "demo_r1",
@@ -218,28 +237,6 @@ export const initializeSampleData = () => {
       {
         id: "demo_ri3",
         recipe_id: "demo_r1",
-        ingredient_name: "Sal Mineral",
-        proportion_type: "percent",
-        proportion_value: 5,
-      },
-      // Receita 2 - 70/25/5
-      {
-        id: "demo_ri4",
-        recipe_id: "demo_r2",
-        ingredient_name: "Milho",
-        proportion_type: "percent",
-        proportion_value: 70,
-      },
-      {
-        id: "demo_ri5",
-        recipe_id: "demo_r2",
-        ingredient_name: "Farelo de Soja",
-        proportion_type: "percent",
-        proportion_value: 25,
-      },
-      {
-        id: "demo_ri6",
-        recipe_id: "demo_r2",
         ingredient_name: "Sal Mineral",
         proportion_type: "percent",
         proportion_value: 5,
